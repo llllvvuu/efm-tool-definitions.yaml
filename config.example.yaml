@@ -1,0 +1,39 @@
+version: 2
+root-markers:
+  - .git/
+lint-debounce: 1s
+languages:
+  crystal:
+    - <<: *ameba
+  javascript:
+    - <<: *prettierd
+  javascript.jsx:
+    - <<: *prettierd
+  javascriptreact:
+    - <<: *prettierd
+  lua:
+    - <<: *luacheck
+    - <<: *stylua
+  markdown:
+    - <<: *alex
+    - <<: *prettierd
+  markdown.mdx:
+    - <<: *alex
+    - <<: *prettierd
+  solidity:
+    - <<: *solhint
+    - <<: *slither
+    - <<: *forge-fmt
+  sh:
+    - <<: *shellcheck
+    - <<: *shfmt
+  typescript:
+    - <<: *prettierd
+  typescript.tsx:
+    - <<: *prettierd
+  typescriptreact:
+    - <<: *prettierd
+  yaml:
+    - <<: *yamllint
+    - <<: *action-lint
+    - <<: *prettierd

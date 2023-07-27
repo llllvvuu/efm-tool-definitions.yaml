@@ -1,0 +1,173 @@
+---
+tools:
+  action-lint: &action-lint
+    # go install github.com/rhysd/actionlint/cmd/actionlint@latest
+    lint-command: >
+      env input=${INPUT} substr=.github/workflows sh -c
+      '[ "${input#*$substr}" != "$input" ] &&
+      actionlint -no-color -
+      $([ -f .github/actionlint.yaml ] && echo "-config-file .github/actionlint.yaml")
+      $([ -f .github/actionlint.yml ] && echo "-config-file .github/actionlint.yml")'
+    lint-source: "action-lint"
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l:%c:%m'
+  alex: &alex
+    # npm install -g alex
+    lint-command: 'PATH="./node_modules/.bin:$PATH" alex --stdin'
+    lint-formats:
+      - '  %l:%c-%e:%k  %terror  %m'
+      - '  %l:%c-%e:%k  %tarning  %m'
+    lint-source: 'alex'
+    lint-stdin: true
+    root-markers:
+      - 'package.json'
+  ameba: &ameba
+    # https://github.com/crystal-ameba/ameba
+    lint-command: 'PATH="./bin:$PATH" ameba --no-color --format flycheck ${INPUT}'
+    lint-formats:
+      - '%.%#:%l:%c: %t: %m'
+    lint-ignore-exit-code: true
+    lint-source: 'ameba'
+    lint-stdin: false
+    root-markers:
+      - '.ameba.yml'
+  forge-fmt: &forge-fmt
+    # curl -L https://foundry.paradigm.xyz | bash
+    # foundryup
+    format-command: 'forge fmt --raw -'
+    format-stdin: true
+    root-markers:
+      - foundry.toml
+  luacheck: &luacheck
+    # luarocks install luacheck
+    lint-command: 'luacheck --codes --no-color --quiet -'
+    lint-formats:
+      - '%.%#:%l:%c: (%t%n) %m'
+    lint-source: 'luacheck'
+    lint-stdin: true
+    root-markers:
+      - '.luacheckrc'
+  prettierd: &prettierd
+    # npm install -g @fsouza/prettierd
+    format-can-range: true
+    format-command: >
+      PATH="./node_modules/.bin:$PATH"
+      prettierd ${INPUT} ${--range-start=charStart} ${--range-end=charEnd}
+      ${--tab-width=tabSize} ${--use-tabs=!insertSpaces}
+    format-stdin: true
+    root-markers:
+      - .prettierrc
+      - .prettierrc.json
+      - .prettierrc.js
+      - .prettierrc.yml
+      - .prettierrc.yaml
+      - .prettierrc.json5
+      - .prettierrc.mjs
+      - .prettierrc.cjs
+      - .prettierrc.toml
+  shellcheck: &shellcheck
+    # brew, apt, pacman, yum, etc
+    lint-command: "shellcheck --color=never --format=gcc -"
+    lint-source: "shellcheck"
+    lint-stdin: true
+    lint-formats:
+      - '-:%l:%c: %trror: %m'
+      - '-:%l:%c: %tarning: %m'
+      - '-:%l:%c: %tote: %m'
+  shfmt: &shfmt
+    # go install mvdan.cc/sh/v3/cmd/shfmt@latest
+    format-command: "shfmt -filename ${INPUT} -"
+    format-stdin: true
+  slither: &slither
+    # pip3 install slither-analyzer
+    # USAGE:
+    # * `solc` needs to be manually configured, see:
+    # https://github.com/foundry-rs/foundry/issues/5429
+    # https://github.com/crytic/slither/issues/2054
+    # * `remappings.txt` needs to generated, e.g. `forge remappings > remappings.txt`
+    lint-category-map:
+      I: N
+      O: N
+      H: E
+      M: W
+      L: I
+    # Parsing JSON without `jq`, backtracking, or lazy matching is cursed,
+    # but the following is fully POSIX compliant.
+    # (only POSIX shell syntax and POSIX features of `sed`/`awk`/`printf`)
+    # Explanation:
+    # 1. Add ASCII delimiters to mark keywords: https://en.wikipedia.org/wiki/Delimiter#ASCII_delimited_text
+    # 2. Search through delimiters to format subsections of text. Mark results with different delimiters.
+    # 3. Pick out the marked results. It'll be the even-numbered fields,
+    #    example: junk|results|junk|results|junk.
+    # 4. Turn the "lines" result (e.g. "1,2,3,4") into range (e.g. "1-4").
+    # 5. Change the newline formatting since Neovim doesn't support multi-line messages
+    lint-command: >
+      slither --json - "${INPUT}" --solc-remaps "$([ -f remappings.txt ] && tr '\n' ' ' < remappings.txt | xargs)"
+      | sed "s/filename_absolute/$(printf '%b' '\0036')filename_absolute/g"
+      | sed "s/lines/$(printf '%b' '\0036')lines/g"
+      | sed "s/description/$(printf '%b' '\0037')description/g"
+      | sed "s/impact/$(printf '%b' '\0036')impact/g"
+      | sed "s/\"elements\"[^$(printf '%b' '\0036')]*\"$(printf '%b' '\0036')filename_absolute\": \"\([^\"]*\)\"[^$(printf '%b' '\0036')]*\"$(printf '%b' '\0036')lines\": \[\([^]]*\)\][^0-9]*starting_column\": \([0-9]*\), \"ending_column\": \([0-9]*\)[^$(printf '%b' '\0037')]*$(printf '%b' '\0037')description\": \"\([^\"]*\)[^$(printf '%b' '\0036')]*\"$(printf '%b' '\0036')impact\": \"\([^\"]*\)\"/$(printf '%b' '\0035')\2| \3-\4 of \1 (\6): \5$(printf '%b' '\0035')/g"
+      | awk -F "$(printf '%b' '\0035')" '{for (i=2; i<=NF; i+=2) print $i}'
+      | awk -F "|" '{split($1, a, ", "); $1=a[1] "-" a[length(a)] ":"; print $0}'
+      | sed 's/\\t-/ |/g'
+      | sed 's/\\n//g'
+      | sed 's/\\t//g'
+    lint-ignore-exit-code: true
+    lint-formats:
+      - "%l-%e:  %c-%k of %f (%tow): %m"
+      - "%l-%e:  %c-%k of %f (%tedium): %m"
+      - "%l-%e:  %c-%k of %f (%tigh): %m"
+      - "%l-%e:  %c-%k of %f (%tptimization): %m"
+      - "%l-%e:  %c-%k of %f (%tnformational): %m"
+    lint-source: 'slither'
+    # Lint won't rerun unless you save, see:
+    # https://github.com/crytic/slither/issues/2057
+    lint-stdin: false
+    root-markers:
+      - hardhat.config.js
+      - hardhat.config.ts
+      - foundry.toml
+      - remappings.txt
+      - truffle.js
+      - truffle-config.js
+      - ape-config.yaml
+  solhint: &solhint
+    # npm install -g solhint
+    lint-command: >
+      PATH="./node_modules/.bin:$PATH"
+      solhint --formatter unix stdin | awk '{ $NF = "(" $NF ")" } 1'
+    lint-source: 'solhint'
+    lint-stdin: true
+    lint-ignore-exit-code: true
+    lint-formats:
+      - '%l:%c%*[ ]%trror%*[ ]%m'
+      - '%l:%c%*[ ]%tarning%*[ ]%m'
+      - '%f:%l:%c: %m [%trror/%r]'
+      - '%f:%l:%c: %m [%tarning/%r]'
+    root-markers:
+      - .solhint.json
+  stylua: &stylua
+    # cargo install stylua
+    format-can-range: true
+    format-command: >
+      stylua ${--indent-width:tabSize} ${--range-start:charStart}
+      ${--range-end:charEnd} --color Never -
+    format-stdin: true
+    root-markers:
+      - 'stylua.toml'
+      - '.stylua.toml'
+  yamllint: &yamllint
+    # pip install yamllint
+    lint-command: 'yamllint --strict --format parsable -'
+    lint-source: 'yamllint'
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l:%c: [%t%*[a-z]] %m'
+    env:
+      - 'PYTHONIOENCODING=UTF-8'
+    root-markers:
+      - '.yamllint'
+      - '.yamllint.yaml'
+      - '.yamllint.yml'
