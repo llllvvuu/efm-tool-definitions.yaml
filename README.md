@@ -1,6 +1,6 @@
 # Tool Definitions for [`efm-langserver`](https://github.com/mattn/efm-langserver)
 
-Like [`efmls-config-nvim`](https://github.com/creativenull/efmls-configs-nvim), but cross-editor.
+`efm-langserver` essentially wraps standalone executables and serves them as LSP so that their features are integrated into your code editor. Tool definitions specify how to call the executable and parse the output.
 
 I don't prioritize configuring tools that are already in LSP (such as `cargo check`/`fmt` in `rust-analyzer` or [ESLint's language server](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#eslint)), but contributions on that front are welcome.
 
@@ -12,7 +12,7 @@ mkdir -p ~/.config/efm-langserver
 cat tool-definitions.yaml config.example.yaml > ~/.config/efm-langserver/config.yaml
 ```
 
-* VSCode: Marketplace Extension (TODO)
+* VSCode: [Generic LSP Client](https://github.com/llllvvuu/vscode-glspc)
 * neovim: `require("lspconfig").efm.setup({})`
 * vim/kakoune/helix/emacs/etc: See [`efm-langserver`](https://github.com/mattn/efm-langserver).
 
@@ -31,5 +31,7 @@ brew install shellcheck # or pacman, apt, yum, etc
 ```
 
 ## Credits
-- [`efmls-configs-nvim`](https://github.com/creativenull/efmls-configs-nvim) is where all of these are from
-- Before that, the OGs [`ale`](https://github.com/dense-analysis/ale), [`null-ls`](https://github.com/jose-elias-alvarez/null-ls.nvim), and [`neoformat`](https://github.com/sbdchd/neoformat)
+- [`efmls-configs-nvim`](https://github.com/creativenull/efmls-configs-nvim)
+- [`ale`](https://github.com/dense-analysis/ale)
+- [`null-ls`](https://github.com/jose-elias-alvarez/null-ls.nvim)
+- [`neoformat`](https://github.com/sbdchd/neoformat)
