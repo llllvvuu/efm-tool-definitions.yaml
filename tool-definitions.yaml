@@ -32,6 +32,13 @@ tools:
     lint-stdin: false
     root-markers:
       - '.ameba.yml'
+  black: &black
+    # pip install black
+    format-command: 'black --no-color -q -'
+    format-stdin: true
+    root-markers:
+      - pyproject.toml
+      - requirements.txt
   forge-fmt: &forge-fmt
     # curl -L https://foundry.paradigm.xyz | bash
     # foundryup

@@ -25,7 +25,7 @@ npm install -g alex @fsouza/prettierd
 cargo install stylua
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
-pip install yamllint
+pip install black yamllint
 luarocks install luacheck
 brew install shellcheck # or pacman, apt, yum, etc
 ```

@@ -1,4 +1,6 @@
 version: 2
+# log-file: /Users/llwu/efmlog.txt
+# log-level: 9
 root-markers:
   - .git/
 lint-debounce: 1s
@@ -20,6 +22,8 @@ languages:
   markdown.mdx:
     - <<: *alex
     - <<: *prettierd
+  python:
+    - <<: *black
   solidity:
     - <<: *solhint
     - <<: *slither
