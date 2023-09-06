@@ -14,7 +14,7 @@ languages:
   javascriptreact:
     - <<: *prettierd
   lua:
-    - <<: *luacheck
+    - <<: *selene
     - <<: *stylua
   markdown:
     - <<: *alex
@@ -22,8 +22,6 @@ languages:
   markdown.mdx:
     - <<: *alex
     - <<: *prettierd
-  python:
-    - <<: *black
   solidity:
     - <<: *solhint
     - <<: *slither
