@@ -32,7 +32,8 @@ npm install -g alex @fsouza/prettierd
 cargo install stylua
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
-pip install black yamllint fixit
+go install github.com/mrtazz/checkmake/cmd/checkmake@latest
+pip install black yamllint fixit cmakelang proselint
 luarocks install luacheck
 brew install hadolint shellcheck # or pacman, apt, yum, etc
 ```

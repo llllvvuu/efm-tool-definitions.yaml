@@ -3,6 +3,8 @@ root-markers:
   - .git/
 lint-debounce: 1s
 languages:
+  cmake:
+    - <<: *cmake-lint
   crystal:
     - <<: *ameba
   dockerfile:
@@ -16,11 +18,15 @@ languages:
   lua:
     - <<: *selene
     - <<: *stylua
+  make:
+    - <<: *checkmake
   markdown:
     - <<: *alex
+    - <<: *proselint
     - <<: *prettierd
   markdown.mdx:
     - <<: *alex
+    - <<: *proselint
     - <<: *prettierd
   solidity:
     - <<: *solhint
@@ -29,6 +35,8 @@ languages:
   sh:
     - <<: *shellcheck
     - <<: *shfmt
+  tex:
+    - <<: *chktex
   typescript:
     - <<: *prettierd
   typescript.tsx:
