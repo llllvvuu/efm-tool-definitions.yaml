@@ -2,7 +2,7 @@
 
 `efm-langserver` wraps CLIs and serves them over [LSP](https://microsoft.github.io/language-server-protocol/) for integration into code editors. It requires tool definitions to specify how to call the executable and parse the output.
 
-With `efm-tool-definitions.yaml` you can skip the server configuration and just set up the client.
+With `efm-tool-definitions.yaml` you can expedite this server configuration and just set up the client.
 
 ## Installation and Usage
 
@@ -20,7 +20,7 @@ cat tool-definitions.yaml config.example.yaml > ~/.config/efm-langserver/config.
 ### Configure the client
 
 * VSCode: [Generic LSP Client](https://github.com/llllvvuu/vscode-glspc)
-* neovim: `require("lspconfig").efm.setup({})`
+* neovim: [`require("lspconfig").efm.setup({})`](https://github.com/neovim/nvim-lspconfig)
 * vim/kakoune/helix/emacs/etc: See [`efm-langserver`](https://github.com/mattn/efm-langserver).
 
 ### Install Linter/Formatter Executables
@@ -34,10 +34,10 @@ go install github.com/rhysd/actionlint/cmd/actionlint@latest
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
 pip install black yamllint fixit
 luarocks install luacheck
-brew install shellcheck # or pacman, apt, yum, etc
+brew install hadolint shellcheck # or pacman, apt, yum, etc
 ```
 
-## Credits
+## Acknowledgments
 - [`efmls-configs-nvim`](https://github.com/creativenull/efmls-configs-nvim)
 - [`ale`](https://github.com/dense-analysis/ale)
 - [`null-ls`](https://github.com/jose-elias-alvarez/null-ls.nvim)

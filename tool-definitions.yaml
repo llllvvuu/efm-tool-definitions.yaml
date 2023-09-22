@@ -60,6 +60,17 @@ tools:
     format-stdin: true
     root-markers:
       - foundry.toml
+  hadolint: &hadolint
+    # brew install hadolint
+    lint-command: 'hadolint --no-color -'
+    lint-formats:
+      - '-:%l %.%# %trror: %m'
+      - '-:%l %.%# %tarning: %m'
+      - '-:%l %.%# %tnfo: %m'
+    lint-source: 'hadolint'
+    lint-stdin: true
+    root-markers:
+      - '.hadolint.yaml'
   luacheck: &luacheck
     # luarocks install luacheck
     lint-command: 'luacheck --codes --no-color --quiet -'
