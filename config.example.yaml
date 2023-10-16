@@ -29,9 +29,7 @@ languages:
     - <<: *proselint
     - <<: *prettierd
   solidity:
-    - <<: *solhint
     - <<: *slither
-    - <<: *forge-fmt
   sh:
     - <<: *shellcheck
     - <<: *shfmt
