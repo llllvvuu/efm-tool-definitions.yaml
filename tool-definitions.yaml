@@ -74,13 +74,13 @@ tools:
     format-stdin: false
   fixit: &fixit
     # pip install --pre "fixit >1"
-    lint-command: 'fixit lint ${INPUT}'
+    lint-command: 'fixit lint - ${INPUT}'
     lint-formats:
       - '%f@%l:%c %m'
     lint-ignore-exit-code: true
     lint-severity: 2  # Display at "warning" level (Fixit 2 Violations don't specify severity)
     lint-source: 'fixit2'
-    lint-stdin: false
+    lint-stdin: true
     root-markers:
       - 'pyproject.toml'
       - 'requirements.txt'
@@ -158,6 +158,10 @@ tools:
       - '-:%l:%c: %trror: %m'
       - '-:%l:%c: %tarning: %m'
       - '-:%l:%c: %tote: %m'
+  shellharden: &shellharden
+    # cargo install shellharden
+    format-command: "shellharden --transform ''"
+    format-stdin: true
   shfmt: &shfmt
     # go install mvdan.cc/sh/v3/cmd/shfmt@latest
     format-command: "shfmt -filename ${INPUT} -"
